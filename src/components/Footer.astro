@@ -1,5 +1,6 @@
 ---
-// Footer.astro — Minimal footer with subtle presence.
+// Footer.astro — Minimal footer with contact icons.
+import ContactSection from './ContactSection.astro';
 ---
 
 <footer class="footer">
@@ -7,6 +8,9 @@
     <p class="footer__text">
       A quiet place worth coming back to.
     </p>
+
+    <ContactSection />
+
     <p class="footer__copy">
       &copy; {new Date().getFullYear()} Kristina's Treehouse
     </p>
@@ -24,9 +28,10 @@
     margin: 0 auto;
     padding: 0 var(--space-sm);
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     gap: var(--space-sm);
+    text-align: center;
   }
 
   .footer__text {
@@ -40,12 +45,5 @@
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     margin: 0;
-  }
-
-  @media (max-width: 600px) {
-    .footer__inner {
-      flex-direction: column;
-      align-items: flex-start;
-    }
   }
 </style>
