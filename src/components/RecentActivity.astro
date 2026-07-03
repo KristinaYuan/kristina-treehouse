@@ -1,0 +1,141 @@
+---
+// RecentActivity.astro — GitHub-style timeline of recent updates.
+// Data is loaded from content/activity.json at the project root.
+
+import activityData from '../../content/activity.json';
+
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+
+interface ActivityEntry {
+  date: string;
+  section: string;
+  title: string;
+  type?: string;
+}
+
+const entries = (activityData as ActivityEntry[])
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 15);
+
+// Format date as e.g. "Jul 3"
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+---
+
+<section class="activity" aria-label="Recent activity">
+  <h2 class="activity__heading">Recent Activity</h2>
+
+  {entries.length === 0 ? (
+    <p class="activity__empty">Nothing here yet. Check back soon.</p>
+  ) : (
+    <ul class="activity__list">
+      {entries.map((entry) => (
+        <li class="activity__item">
+          <span class="activity__dot" aria-hidden="true" />
+          <time class="activity__date" datetime={entry.date}>
+            {formatDate(entry.date)}
+          </time>
+          <span class="activity__text">
+            <a href={`${base}/${entry.section}`} class="activity__section">
+              {entry.section}
+            </a>
+            <span class="activity__sep">&rarr;</span>
+            {entry.title}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )}
+</section>
+
+<style>
+  .activity {
+    margin-bottom: var(--space-xl);
+  }
+
+  .activity__heading {
+    font-size: var(--text-xl);
+    font-family: var(--font-serif);
+    margin-bottom: var(--space-md);
+    font-weight: 500;
+  }
+
+  .activity__empty {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .activity__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+  }
+
+  /* Vertical line */
+  .activity__list::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--activity-dot-size) / 2 - 0.5px);
+    top: var(--activity-dot-size);
+    bottom: 0;
+    width: 1px;
+    background: var(--activity-line-color);
+  }
+
+  .activity__item {
+    display: grid;
+    grid-template-columns: var(--activity-dot-size) auto 1fr;
+    gap: var(--space-sm);
+    align-items: baseline;
+    padding-bottom: var(--space-sm);
+    margin: 0;
+    position: relative;
+  }
+
+  .activity__item:last-child {
+    padding-bottom: 0;
+  }
+
+  .activity__dot {
+    display: block;
+    width: var(--activity-dot-size);
+    height: var(--activity-dot-size);
+    border-radius: 50%;
+    background: var(--activity-dot-color);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    margin-top: 0.4em;
+  }
+
+  .activity__date {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .activity__text {
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+  }
+
+  .activity__section {
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    text-transform: capitalize;
+  }
+
+  .activity__section:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .activity__sep {
+    color: var(--color-text-muted);
+    margin: 0 0.3em;
+  }
+</style>

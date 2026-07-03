@@ -1,0 +1,166 @@
+---
+// [section]/index.astro — Section listing page (e.g. /knowledge, /reading, ...).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  VALID_SECTIONS,
+  getSectionMeta,
+  getSectionArticles,
+  formatDate,
+} from '../../utils/content';
+
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export function getStaticPaths() {
+  return [...VALID_SECTIONS].map((section) => ({ params: { section } }));
+}
+
+const { section } = Astro.params;
+const meta = getSectionMeta(section!);
+
+if (!meta) {
+  return Astro.redirect(base || '/');
+}
+
+const articles = getSectionArticles(section!);
+---
+
+<BaseLayout title={meta.label} description={meta.description}>
+  <header class="section-header">
+    <h1 class="section-header__title">{meta.label}</h1>
+    <p class="section-header__desc">{meta.description}</p>
+  </header>
+
+  {articles.length === 0 ? (
+    <div class="empty">
+      <p>Nothing here yet.</p>
+      <p class="empty__hint">
+        Add <code>.md</code> files to <code>content/{section}/</code> to get started.
+      </p>
+    </div>
+  ) : (
+    <ul class="article-list">
+      {articles.map((article) => (
+        <li class="article-item">
+          <a
+            href={`${base}/${section}/${article.slug}`}
+            class="article-item__link"
+          >
+            <h2 class="article-item__title">{article.frontmatter.title}</h2>
+            {article.frontmatter.description && (
+              <p class="article-item__desc">{article.frontmatter.description}</p>
+            )}
+            <div class="article-item__meta">
+              <time datetime={article.frontmatter.date}>
+                {formatDate(article.frontmatter.date)}
+              </time>
+              {article.frontmatter.tags && article.frontmatter.tags.length > 0 && (
+                <span class="article-item__tags">
+                  {article.frontmatter.tags.map((tag) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </span>
+              )}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
+
+<style>
+  .section-header {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-header__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
+  }
+
+  .section-header__desc {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+  }
+
+  .empty__hint {
+    font-size: var(--text-sm);
+    margin-top: var(--space-xs);
+  }
+
+  .empty__hint code {
+    font-size: 0.85em;
+  }
+
+  .article-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .article-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .article-item__link {
+    display: block;
+    padding: var(--space-md);
+    text-decoration: none;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .article-item__link:hover {
+    background: var(--color-accent-subtle);
+    border-color: var(--color-accent);
+  }
+
+  .article-item__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2xs);
+  }
+
+  .article-item__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-sm);
+    line-height: var(--leading-snug);
+  }
+
+  .article-item__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .article-item__tags {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    background: var(--color-accent-subtle);
+    border-radius: var(--radius-sm);
+  }
+</style>

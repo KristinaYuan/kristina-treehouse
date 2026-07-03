@@ -1,0 +1,122 @@
+---
+// CurrentlySection.astro — Snapshot of current interests.
+// Edit the items below to reflect what you're currently up to.
+
+interface CurrentlyItem {
+  label: string;
+  text: string;
+}
+
+const currently: { heading: string; items: CurrentlyItem[] }[] = [
+  {
+    heading: 'Currently Reading',
+    items: [
+      { label: 'Book', text: 'Add a book title here' },
+    ],
+  },
+  {
+    heading: 'Currently Building',
+    items: [
+      { label: 'Project', text: 'Add a project here' },
+    ],
+  },
+  {
+    heading: 'Currently Thinking',
+    items: [
+      { label: 'Thought', text: 'Add a thought here' },
+    ],
+  },
+  {
+    heading: 'Recently Listening',
+    items: [
+      { label: 'Music', text: 'Add an album or song here' },
+    ],
+  },
+].filter((group) => group.items.length > 0);
+---
+
+{currently.length > 0 && (
+  <section class="currently" aria-label="Currently">
+    <h2 class="currently__heading">Currently</h2>
+
+    <div class="currently__grid">
+      {currently.map((group) => (
+        <div class="currently__group">
+          <h3 class="currently__subheading">{group.heading}</h3>
+          <ul class="currently__list">
+            {group.items.map((item) => (
+              <li class="currently__item">
+                <span class="currently__label">{item.label}</span>
+                <span class="currently__text">{item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .currently {
+    margin-bottom: var(--space-xl);
+  }
+
+  .currently__heading {
+    font-size: var(--text-xl);
+    font-family: var(--font-serif);
+    margin-bottom: var(--space-md);
+    font-weight: 500;
+  }
+
+  .currently__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+
+  .currently__group {
+    /* intentionally empty — spacing handled by grid gap */
+  }
+
+  .currently__subheading {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .currently__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .currently__item {
+    display: flex;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    padding: var(--space-2xs) 0;
+    margin: 0;
+  }
+
+  .currently__label {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  .currently__label::after {
+    content: '·';
+    margin-left: var(--space-2xs);
+  }
+
+  @media (max-width: 600px) {
+    .currently__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

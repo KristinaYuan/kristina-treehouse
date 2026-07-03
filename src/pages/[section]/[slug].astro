@@ -1,0 +1,165 @@
+---
+// [section]/[slug].astro — Individual article page.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  VALID_SECTIONS,
+  getSectionMeta,
+  getArticle,
+  formatDate,
+} from '../../utils/content';
+
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export function getStaticPaths() {
+  const paths: { params: { section: string; slug: string } }[] = [];
+
+  // Static glob — dynamic template literals are not supported by import.meta.glob
+  const modules = import.meta.glob<{
+    frontmatter: { title: string; date: string };
+  }>('/content/**/*.md', { eager: true });
+
+  for (const [path] of Object.entries(modules)) {
+    const match = path.match(/^\/content\/([^/]+)\/([^/]+)\.md$/);
+    if (match && VALID_SECTIONS.has(match[1])) {
+      paths.push({ params: { section: match[1], slug: match[2] } });
+    }
+  }
+
+  return paths;
+}
+
+const { section, slug } = Astro.params;
+
+const meta = getSectionMeta(section!);
+if (!meta) {
+  return Astro.redirect(base || '/');
+}
+
+const article = getArticle(section!, slug!);
+if (!article) {
+  return Astro.redirect(`${base}/${section}`);
+}
+
+const { frontmatter, Content } = article;
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description} narrow>
+  <article class="article">
+    <header class="article__header">
+      <a href={`${base}/${section}`} class="article__back">
+        &larr; {meta.label}
+      </a>
+
+      <h1 class="article__title">{frontmatter.title}</h1>
+
+      <div class="article__meta">
+        <time datetime={frontmatter.date}>
+          Published {formatDate(frontmatter.date)}
+        </time>
+
+        {frontmatter.updated && frontmatter.updated !== frontmatter.date && (
+          <span class="article__updated">
+            &middot; Updated {formatDate(frontmatter.updated!)}
+          </span>
+        )}
+
+        {frontmatter.tags && frontmatter.tags.length > 0 && (
+          <span class="article__tags">
+            {frontmatter.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </span>
+        )}
+      </div>
+    </header>
+
+    <div class="article__content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article {
+    max-width: var(--max-width-article);
+  }
+
+  .article__header {
+    margin-bottom: var(--space-lg);
+  }
+
+  .article__back {
+    display: inline-block;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    margin-bottom: var(--space-md);
+    transition: color var(--transition-fast);
+  }
+
+  .article__back:hover {
+    color: var(--color-accent);
+  }
+
+  .article__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: 500;
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-sm);
+  }
+
+  .article__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .article__updated {
+    color: var(--color-text-muted);
+  }
+
+  .article__tags {
+    display: flex;
+    gap: 0.35rem;
+    margin-left: var(--space-xs);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    background: var(--color-accent-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .article__content {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+  }
+
+  .article__content :global(h1),
+  .article__content :global(h2),
+  .article__content :global(h3) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .article__content :global(p) {
+    margin-bottom: var(--space-sm);
+  }
+
+  .article__content :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--color-divider);
+  }
+
+  .article__content :global(a:hover) {
+    text-decoration-color: var(--color-accent);
+  }
+</style>

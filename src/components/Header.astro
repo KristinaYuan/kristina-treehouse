@@ -1,0 +1,149 @@
+---
+// Header.astro — Fixed top navigation with translucent blur.
+// Nav items' first letters spell K R I S T I N A (easter egg).
+
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const navItems = [
+  { label: 'Knowledge', href: `${base}/knowledge` },
+  { label: 'Reading',   href: `${base}/reading` },
+  { label: 'Ideas',     href: `${base}/ideas` },
+  { label: 'Stories',   href: `${base}/stories` },
+  { label: 'Thoughts',  href: `${base}/thoughts` },
+  { label: 'Interlude', href: `${base}/interlude` },
+  { label: 'Notes',     href: `${base}/notes` },
+  { label: 'Archive',   href: `${base}/archive` },
+];
+
+const homeHref = base || '/';
+const currentPath = Astro.url?.pathname || '/';
+---
+
+<nav class="header" aria-label="Main navigation">
+  <div class="header__inner">
+    <a href={homeHref} class="header__brand">
+      Kristina's Treehouse
+    </a>
+
+    <ul class="header__nav">
+      {navItems.map((item) => {
+        const isActive = currentPath.startsWith(item.href + '/') || currentPath === item.href;
+        return (
+          <li>
+            <a
+              href={item.href}
+              class:list={['header__link', { 'header__link--active': isActive }]}
+            >
+              {item.label}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: var(--header-height);
+    background: var(--header-bg);
+    backdrop-filter: blur(var(--header-blur));
+    -webkit-backdrop-filter: blur(var(--header-blur));
+    border-bottom: 1px solid var(--header-border-color);
+    transition: background var(--transition-normal);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--max-width-home);
+    margin: 0 auto;
+    padding: 0 var(--space-sm);
+    height: 100%;
+  }
+
+  .header__brand {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity var(--transition-fast);
+  }
+
+  .header__brand:hover {
+    opacity: 0.7;
+  }
+
+  .header__nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__nav li {
+    margin: 0;
+  }
+
+  .header__link {
+    display: inline-block;
+    padding: 0.35rem 0.6rem;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background var(--transition-fast);
+    white-space: nowrap;
+  }
+
+  .header__link:hover {
+    color: var(--color-text-primary);
+    background: var(--color-accent-light);
+  }
+
+  .header__link--active {
+    color: var(--color-accent);
+  }
+
+  /* Tighten spacing on medium screens so all items fit on one line */
+  @media (max-width: 900px) {
+    .header__link {
+      padding: 0.35rem 0.4rem;
+      font-size: 0.8rem;
+    }
+    .header__brand {
+      font-size: var(--text-base);
+    }
+  }
+
+  /* On small screens, allow nav to scroll horizontally */
+  @media (max-width: 700px) {
+    .header__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      padding-top: 0.5rem;
+      height: auto;
+    }
+    .header {
+      height: auto;
+      min-height: var(--header-height);
+    }
+    .header__nav {
+      overflow-x: auto;
+      width: 100%;
+      padding-bottom: 0.25rem;
+    }
+  }
+</style>

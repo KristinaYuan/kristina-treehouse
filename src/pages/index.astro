@@ -1,0 +1,70 @@
+---
+// index.astro — Homepage: title, intro, activity, explore, currently.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RecentActivity from '../components/RecentActivity.astro';
+import SectionGrid from '../components/SectionGrid.astro';
+import CurrentlySection from '../components/CurrentlySection.astro';
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="hero">
+    <h1 class="hero__title">Kristina's Treehouse</h1>
+    <p class="hero__subtitle">A little library in the trees.</p>
+  </section>
+
+  <!-- Introduction -->
+  <section class="intro">
+    <p>
+      Welcome to my treehouse — a quiet corner of the internet where I collect
+      notes, stories, ideas, and small moments. This is not a blog; it's a
+      living archive of things I'm learning, reading, building, and thinking about.
+    </p>
+    <p>
+      Feel free to wander through the sections. There's no rush.
+    </p>
+  </section>
+
+  <!-- Recent Activity -->
+  <RecentActivity />
+
+  <!-- Explore Sections -->
+  <SectionGrid />
+
+  <!-- Currently -->
+  <CurrentlySection />
+</BaseLayout>
+
+<style>
+  .hero {
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+    line-height: var(--leading-tight);
+  }
+
+  .hero__subtitle {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .intro {
+    margin-bottom: var(--space-xl);
+    max-width: 600px;
+  }
+
+  .intro p {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+</style>
