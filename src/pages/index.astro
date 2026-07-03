@@ -1,9 +1,13 @@
 ---
 // index.astro — Homepage: title, intro, activity, explore, currently.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import AboutSection from '../components/AboutSection.astro';
+import EducationSection from '../components/EducationSection.astro';
 import RecentActivity from '../components/RecentActivity.astro';
 import SectionGrid from '../components/SectionGrid.astro';
+import FriendLinks from '../components/FriendLinks.astro';
 import CurrentlySection from '../components/CurrentlySection.astro';
+import ContactSection from '../components/ContactSection.astro';
 ---
 
 <BaseLayout>
@@ -25,14 +29,26 @@ import CurrentlySection from '../components/CurrentlySection.astro';
     </p>
   </section>
 
+  <!-- About -->
+  <AboutSection />
+
+  <!-- Education -->
+  <EducationSection />
+
   <!-- Recent Activity -->
   <RecentActivity />
 
   <!-- Explore Sections -->
   <SectionGrid />
 
+  <!-- Friend Links -->
+  <FriendLinks />
+
   <!-- Currently -->
   <CurrentlySection />
+
+  <!-- Contact -->
+  <ContactSection />
 </BaseLayout>
 
 <style>

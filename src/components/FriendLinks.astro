@@ -1,0 +1,99 @@
+---
+// FriendLinks.astro — Blogroll / friend links on the homepage.
+// Data is loaded from content/friends.json.
+
+import friendsData from '../../content/friends.json';
+
+interface FriendEntry {
+  name: string;
+  url: string;
+  description: string;
+}
+
+const entries = (friendsData as FriendEntry[]) ?? [];
+---
+
+{entries.length > 0 && (
+  <section class="friends" aria-label="Friends">
+    <h2 class="friends__heading">Friends</h2>
+
+    <div class="friends__grid">
+      {entries.map((entry) => (
+        <a href={entry.url} class="friends__card">
+          <h3 class="friends__name">{entry.name}</h3>
+          <p class="friends__desc">{entry.description}</p>
+          <span class="friends__arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .friends {
+    margin-bottom: var(--space-xl);
+  }
+
+  .friends__heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    margin-bottom: var(--space-md);
+  }
+
+  .friends__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .friends__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-md);
+    text-decoration: none;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+    position: relative;
+  }
+
+  .friends__card:hover {
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+  }
+
+  .friends__name {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2xs);
+  }
+
+  .friends__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: var(--leading-snug);
+  }
+
+  .friends__arrow {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .friends__card:hover .friends__arrow {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 600px) {
+    .friends__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

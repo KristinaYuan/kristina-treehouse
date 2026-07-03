@@ -1,0 +1,120 @@
+---
+// ContactSection.astro — Contact links on the homepage.
+// Data is loaded from content/profile.json.
+
+import profileData from '../../content/profile.json';
+
+interface ContactEntry {
+  label: string;
+  value: string;
+  href: string;
+  icon: string;
+}
+
+interface ProfileData {
+  contact: ContactEntry[];
+}
+
+const data = profileData as ProfileData;
+const entries = data.contact ?? [];
+
+// Simple icon mapping using Unicode symbols
+function getIcon(icon: string): string {
+  const icons: Record<string, string> = {
+    mail: '✉',        // ✉
+    github: '⌘',      // ⌘
+    twitter: '@',     // @
+    linkedin: '↗',    // ↗
+    website: '⌂',     // ⌂
+    default: '→',     // →
+  };
+  return icons[icon] || icons.default;
+}
+---
+
+{entries.length > 0 && (
+  <section class="contact" aria-label="Contact">
+    <h2 class="contact__heading">Contact</h2>
+
+    <ul class="contact__list">
+      {entries.map((entry) => (
+        <li class="contact__item">
+          <a href={entry.href} class="contact__link">
+            <span class="contact__icon">{getIcon(entry.icon)}</span>
+            <span class="contact__label">{entry.label}</span>
+            <span class="contact__value">{entry.value}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .contact {
+    margin-bottom: var(--space-xl);
+  }
+
+  .contact__heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    margin-bottom: var(--space-md);
+  }
+
+  .contact__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .contact__item {
+    margin: 0;
+  }
+
+  .contact__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: 0.4rem 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .contact__link:hover {
+    color: var(--color-accent-hover);
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+  }
+
+  .contact__icon {
+    font-size: var(--text-base);
+    flex-shrink: 0;
+  }
+
+  .contact__label {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  .contact__label::after {
+    content: ':';
+  }
+
+  .contact__value {
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 600px) {
+    .contact__list {
+      flex-direction: column;
+    }
+  }
+</style>

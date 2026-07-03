@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Friend's Blog",
+    "url": "https://example.com",
+    "description": "A lovely blog about design, code, and everyday things."
+  },
+  {
+    "name": "Another Friend",
+    "url": "https://example.org",
+    "description": "Thoughtful essays on technology and society."
+  }
+]
