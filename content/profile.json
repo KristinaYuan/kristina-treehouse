@@ -6,23 +6,23 @@
   },
   "education": [
     {
-      "school": "Your University",
-      "degree": "B.S. Computer Science",
-      "years": "2020 – 2024",
-      "description": "Focused on systems and theory. Teaching assistant for Data Structures."
+      "school": "Peking University",
+      "degree": "COE - Theoretical and Applied Mechanics (Robotics Engineering) & EECS - Computer Science",
+      "years": "2024 – 2028",
+      "description": "Patriotism, advancement, democracy and science."
     },
     {
-      "school": "Your Previous School",
+      "school": "Tsinghua University High School",
       "degree": "High School Diploma",
-      "years": "2017 – 2020",
-      "description": "Math and science focus. Started coding in sophomore year."
+      "years": "2021 – 2024",
+      "description": "Self-discipline and social commitment."
     }
   ],
   "contact": [
     {
       "label": "Email",
-      "value": "hello@example.com",
-      "href": "mailto:hello@example.com",
+      "value": "yuanjiayi@stu.pku.edu.cn",
+      "href": "mailto:yuanjiayi@stu.pku.edu.cn",
       "icon": "mail"
     },
     {
@@ -32,10 +32,14 @@
       "icon": "github"
     },
     {
-      "label": "Twitter / X",
-      "value": "@yourhandle",
-      "href": "https://x.com/yourhandle",
-      "icon": "twitter"
+      "label": "WeChat",
+      "value": "Jiayi-Yuan0418",
+      "icon": "wechat"
+    },
+    {
+      "label": "Phone",
+      "value": "+86 183 0118 3201",
+      "icon": "phone"
     }
   ]
 }
