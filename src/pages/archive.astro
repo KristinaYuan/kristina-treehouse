@@ -1,0 +1,210 @@
+---
+// archive.astro — Browse all articles from all sections, grouped by year/month.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getArchive, getSectionMeta, formatDate } from '../utils/content';
+
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+const archive = getArchive();
+---
+
+<BaseLayout title="Archive" description="Everything, organized by time.">
+  <header class="archive-header">
+    <h1 class="archive-header__title">Archive</h1>
+    <p class="archive-header__desc">Everything, organized by time.</p>
+  </header>
+
+  {archive.length === 0 ? (
+    <p class="archive-empty">Nothing here yet.</p>
+  ) : (
+    <div class="archive-years">
+      {archive.map((year) => (
+        <section class="archive-year">
+          <h2 class="archive-year__heading">{year.year}</h2>
+
+          {year.months.map((month) => (
+            <div class="archive-month">
+              <h3 class="archive-month__heading">{month.monthName}</h3>
+
+              <ul class="archive-month__list">
+                {month.articles.map((article) => {
+                  const sectionMeta = getSectionMeta(article.section);
+                  return (
+                    <li class="archive-month__item">
+                      <a
+                        href={`${base}/${article.section}/${article.slug}`}
+                        class="archive-month__link"
+                      >
+                        <div class="archive-month__main">
+                          <h4 class="archive-month__title">
+                            {article.frontmatter.title}
+                          </h4>
+                          {article.frontmatter.description && (
+                            <p class="archive-month__desc">
+                              {article.frontmatter.description}
+                            </p>
+                          )}
+                        </div>
+                        <div class="archive-month__meta">
+                          <time datetime={article.frontmatter.date}>
+                            {formatDate(article.frontmatter.date)}
+                          </time>
+                          {sectionMeta && (
+                            <span class="archive-month__section tag">
+                              {sectionMeta.label}
+                            </span>
+                          )}
+                        </div>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </section>
+      ))}
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .archive-header {
+    margin-bottom: var(--space-lg);
+  }
+
+  .archive-header__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
+  }
+
+  .archive-header__desc {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .archive-empty {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .archive-years {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .archive-year__heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+  }
+
+  .archive-month {
+    margin-bottom: var(--space-md);
+  }
+
+  .archive-month__heading {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .archive-month__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .archive-month__item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .archive-month__link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    text-decoration: none;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .archive-month__link:hover {
+    background: var(--color-accent-subtle);
+    border-color: var(--color-accent);
+  }
+
+  .archive-month__main {
+    min-width: 0;
+  }
+
+  .archive-month__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2xs);
+    line-height: var(--leading-tight);
+  }
+
+  .archive-month__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: var(--leading-snug);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .archive-month__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2xs);
+    flex-shrink: 0;
+  }
+
+  .archive-month__meta time {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .archive-month__section.tag {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    background: var(--color-accent-subtle);
+    padding: 0.1em 0.5em;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (max-width: 600px) {
+    .archive-month__link {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+    }
+
+    .archive-month__meta {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+  }
+</style>

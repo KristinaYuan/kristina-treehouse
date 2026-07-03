@@ -1,23 +1,13 @@
 ---
-// RecentActivity.astro — GitHub-style timeline of recent updates.
-// Data is loaded from content/activity.json at the project root.
-
-import activityData from '../../content/activity.json';
+// RecentActivity.astro — Timeline of recent articles, auto-generated from all sections.
+import { getAllArticles, getSectionMeta } from '../utils/content';
 
 const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
 
-interface ActivityEntry {
-  date: string;
-  section: string;
-  title: string;
-  type?: string;
-}
+// Show 15 most recent articles from all sections
+const articles = getAllArticles().slice(0, 15);
 
-const entries = (activityData as ActivityEntry[])
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  .slice(0, 15);
-
-// Format date as e.g. "Jul 3"
+// Format date as e.g. "Jul 4"
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -27,25 +17,29 @@ function formatDate(dateStr: string): string {
 <section class="activity" aria-label="Recent activity">
   <h2 class="activity__heading">Recent Activity</h2>
 
-  {entries.length === 0 ? (
+  {articles.length === 0 ? (
     <p class="activity__empty">Nothing here yet. Check back soon.</p>
   ) : (
     <ul class="activity__list">
-      {entries.map((entry) => (
+      {articles.map((article) => {
+        const sectionMeta = getSectionMeta(article.section);
+        return (
         <li class="activity__item">
           <span class="activity__dot" aria-hidden="true" />
-          <time class="activity__date" datetime={entry.date}>
-            {formatDate(entry.date)}
+          <time class="activity__date" datetime={article.frontmatter.date}>
+            {formatDate(article.frontmatter.date)}
           </time>
           <span class="activity__text">
-            <a href={`${base}/${entry.section}`} class="activity__section">
-              {entry.section}
+            <a href={`${base}/${article.section}`} class="activity__section">
+              {sectionMeta?.label || article.section}
             </a>
             <span class="activity__sep">&rarr;</span>
-            {entry.title}
+            <a href={`${base}/${article.section}/${article.slug}`} class="activity__title">
+              {article.frontmatter.title}
+            </a>
           </span>
         </li>
-      ))}
+      )})}
     </ul>
   )}
 </section>
@@ -131,6 +125,16 @@ function formatDate(dateStr: string): string {
   }
 
   .activity__section:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .activity__title {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .activity__title:hover {
     color: var(--color-accent-hover);
   }
 
