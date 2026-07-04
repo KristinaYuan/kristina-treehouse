@@ -1,0 +1,97 @@
+---
+// 404.astro — Custom 404 page.
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="404">
+  <div class="not-found">
+    <!-- Tree in fog illustration -->
+    <svg class="not-found__icon" width="120" height="140" viewBox="0 0 120 140" fill="none" aria-hidden="true">
+      <!-- Ground -->
+      <ellipse cx="60" cy="130" rx="55" ry="8" fill="var(--color-divider)"/>
+      <!-- Trunk -->
+      <rect x="56" y="70" width="8" height="60" rx="3" fill="var(--color-text-muted)"/>
+      <!-- Canopy layers -->
+      <ellipse cx="60" cy="65" rx="40" ry="30" fill="var(--color-accent-light)" stroke="var(--color-accent)" stroke-width="1.5"/>
+      <ellipse cx="48" cy="50" rx="30" ry="22" fill="var(--color-accent-subtle)" stroke="var(--color-accent)" stroke-width="1.5"/>
+      <ellipse cx="68" cy="42" rx="26" ry="18" fill="var(--color-accent-light)" stroke="var(--color-accent)" stroke-width="1.5"/>
+      <ellipse cx="60" cy="32" rx="20" ry="14" fill="var(--color-accent-subtle)" stroke="var(--color-accent)" stroke-width="1.5"/>
+      <!-- Small trees in background -->
+      <rect x="18" y="100" width="4" height="28" rx="2" fill="var(--color-text-muted)" opacity="0.4"/>
+      <ellipse cx="20" cy="96" rx="16" ry="14" fill="var(--color-divider)" opacity="0.6"/>
+      <rect x="98" y="105" width="3" height="22" rx="1.5" fill="var(--color-text-muted)" opacity="0.3"/>
+      <ellipse cx="99" cy="102" rx="12" ry="10" fill="var(--color-divider)" opacity="0.5"/>
+    </svg>
+
+    <h1 class="not-found__code">404</h1>
+
+    <p class="not-found__message">
+      You've wandered too far into the woods.
+    </p>
+    <p class="not-found__hint">
+      The path you're looking for doesn't exist. Let's head back.
+    </p>
+
+    <a href={base || '/'} class="not-found__home">
+      &larr; Back to the treehouse
+    </a>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-2xl) 0;
+    min-height: 60vh;
+  }
+
+  .not-found__icon {
+    margin-bottom: var(--space-md);
+    opacity: 0.85;
+  }
+
+  .not-found__code {
+    font-family: var(--font-serif);
+    font-size: 5rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: var(--space-sm);
+  }
+
+  .not-found__message {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .not-found__hint {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+  }
+
+  .not-found__home {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    font-size: var(--text-sm);
+    color: var(--color-bg);
+    background: var(--color-accent);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+  }
+
+  .not-found__home:hover {
+    background: var(--color-accent-hover);
+    color: var(--color-bg);
+  }
+</style>
