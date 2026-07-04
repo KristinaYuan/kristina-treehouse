@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAFCFF"/>
+      <stop offset="100%" stop-color="#edf3fa"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle tree silhouettes in background -->
+  <g opacity="0.06">
+    <ellipse cx="150" cy="530" rx="100" ry="80" fill="#7AAEDB"/>
+    <rect x="146" y="460" width="8" height="70" rx="3" fill="#7AAEDB"/>
+    <ellipse cx="150" cy="440" rx="60" ry="50" fill="#7AAEDB"/>
+
+    <ellipse cx="1050" cy="540" rx="90" ry="70" fill="#7AAEDB"/>
+    <rect x="1047" y="470" width="6" height="70" rx="3" fill="#7AAEDB"/>
+    <ellipse cx="1050" cy="450" rx="50" ry="40" fill="#7AAEDB"/>
+  </g>
+
+  <!-- Treehouse icon (right side) — a house in a tree -->
+  <g transform="translate(870, 170)">
+    <!-- Trunk -->
+    <rect x="-8" y="90" width="16" height="140" rx="6" fill="#98A2B3" opacity="0.5"/>
+    <!-- Canopy background circle -->
+    <circle cx="0" cy="60" r="80" fill="#7AAEDB" opacity="0.12"/>
+    <!-- Canopy -->
+    <ellipse cx="0" cy="70" rx="90" ry="55" fill="#7AAEDB" opacity="0.15"/>
+    <ellipse cx="-25" cy="40" rx="60" ry="40" fill="#7AAEDB" opacity="0.12"/>
+    <ellipse cx="25" cy="30" rx="55" ry="38" fill="#7AAEDB" opacity="0.13"/>
+    <ellipse cx="0" cy="10" rx="45" ry="30" fill="#7AAEDB" opacity="0.14"/>
+    <!-- House in the tree -->
+    <rect x="-20" y="42" width="40" height="38" rx="2" fill="#FAFCFF" stroke="#5D94D3" stroke-width="2.5"/>
+    <!-- Roof -->
+    <polygon points="-26,42 0,22 26,42" fill="#7AAEDB" stroke="#5D94D3" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- Door -->
+    <rect x="-6" y="58" width="12" height="22" rx="2" fill="#5D94D3"/>
+    <!-- Window -->
+    <rect x="-16" y="50" width="8" height="8" rx="1" fill="#7AAEDB" opacity="0.5"/>
+    <rect x="8" y="50" width="8" height="8" rx="1" fill="#7AAEDB" opacity="0.5"/>
+  </g>
+
+  <!-- Text -->
+  <text x="80" y="260" font-family="Georgia, 'Cormorant Garamond', serif" font-size="72" font-weight="500" fill="#2F3745">
+    Kristina's Treehouse
+  </text>
+  <text x="80" y="330" font-family="Georgia, 'Cormorant Garamond', serif" font-size="36" font-style="italic" fill="#667085">
+    A little library in the trees.
+  </text>
+
+  <!-- Decorative line -->
+  <line x1="80" y1="370" x2="480" y2="370" stroke="#7AAEDB" stroke-width="2" opacity="0.5"/>
+
+  <!-- Subtitle -->
+  <text x="80" y="420" font-family="'Inter', system-ui, sans-serif" font-size="24" fill="#98A2B3">
+    Notes, stories, ideas, and quiet moments.
+  </text>
+</svg>
