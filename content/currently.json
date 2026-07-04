@@ -1,0 +1,26 @@
+[
+  {
+    "heading": "Currently Reading",
+    "items": [
+      { "label": "Book", "text": "Add a book title here" }
+    ]
+  },
+  {
+    "heading": "Currently Building",
+    "items": [
+      { "label": "Project", "text": "Add a project here" }
+    ]
+  },
+  {
+    "heading": "Currently Thinking",
+    "items": [
+      { "label": "Thought", "text": "Add a thought here" }
+    ]
+  },
+  {
+    "heading": "Recently Listening",
+    "items": [
+      { "label": "Music", "text": "Add an album or song here" }
+    ]
+  }
+]

@@ -1,38 +1,22 @@
 ---
-// CurrentlySection.astro — Snapshot of current interests.
-// Edit the items below to reflect what you're currently up to.
+// CurrentlySection.astro — Snapshot of current interests on the homepage.
+// Data is loaded from content/currently.json. Edit that file to change content.
+
+import currentlyData from '../../content/currently.json';
 
 interface CurrentlyItem {
   label: string;
   text: string;
 }
 
-const currently: { heading: string; items: CurrentlyItem[] }[] = [
-  {
-    heading: 'Currently Reading',
-    items: [
-      { label: 'Book', text: 'Add a book title here' },
-    ],
-  },
-  {
-    heading: 'Currently Building',
-    items: [
-      { label: 'Project', text: 'Add a project here' },
-    ],
-  },
-  {
-    heading: 'Currently Thinking',
-    items: [
-      { label: 'Thought', text: 'Add a thought here' },
-    ],
-  },
-  {
-    heading: 'Recently Listening',
-    items: [
-      { label: 'Music', text: 'Add an album or song here' },
-    ],
-  },
-].filter((group) => group.items.length > 0);
+interface CurrentlyGroup {
+  heading: string;
+  items: CurrentlyItem[];
+}
+
+const currently: CurrentlyGroup[] = (currentlyData as CurrentlyGroup[]).filter(
+  (group) => group.items && group.items.length > 0
+);
 ---
 
 {currently.length > 0 && (

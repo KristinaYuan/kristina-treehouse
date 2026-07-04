@@ -37,7 +37,7 @@ const fullTitle = title
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;1,14..32,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap"
       rel="stylesheet"
     />
 
@@ -53,6 +53,13 @@ const fullTitle = title
     </main>
 
     <Footer />
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 15l-6-6-6 6"/>
+      </svg>
+    </button>
   </body>
 </html>
 
@@ -63,4 +70,60 @@ const fullTitle = title
     padding-bottom: var(--space-2xl);
     min-height: calc(100vh - var(--header-height));
   }
+
+  /* Back to top button */
+  .back-to-top {
+    position: fixed;
+    bottom: var(--space-md);
+    right: var(--space-md);
+    z-index: 50;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    border: 1px solid var(--color-divider);
+    border-radius: 50%;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity var(--transition-normal), visibility var(--transition-normal), transform var(--transition-normal), color var(--transition-fast), border-color var(--transition-fast);
+    pointer-events: none;
+  }
+
+  .back-to-top--visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .back-to-top:hover {
+    color: var(--color-accent-hover);
+    border-color: var(--color-accent);
+  }
 </style>
+
+<script>
+  const btn = document.getElementById('back-to-top');
+  if (btn) {
+    let ticking = false;
+    const toggle = () => {
+      const show = window.scrollY > 300;
+      btn.classList.toggle('back-to-top--visible', show);
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(toggle);
+        ticking = true;
+      }
+    }, { passive: true });
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>

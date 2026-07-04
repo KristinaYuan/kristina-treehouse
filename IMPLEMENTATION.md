@@ -25,7 +25,7 @@ A personal website built with [Astro](https://astro.build), deployed on GitHub P
 ### Content Architecture
 - **Content separate from code**: all articles go in `content/` at project root
 - **Style parameters in one file**: edit `src/styles/theme.css` to change colors, fonts, spacing
-- **Activity feed via JSON**: update `content/activity.json` to add timeline entries
+- **Activity feed auto-generated**: the homepage timeline is built automatically from your Markdown articles
 
 ### Navigation
 - Fixed top nav with all 8 section links on one line (responsive)
@@ -105,18 +105,7 @@ Your content goes here. Write in Markdown.
 `inline code` and code blocks are styled with JetBrains Mono.
 ```
 
-**To add an activity entry**, edit `content/activity.json`:
-
-```json
-{
-  "date": "2026-07-15",
-  "section": "knowledge",
-  "title": "Added CSAPP Chapter 3 Notes",
-  "type": "new"
-}
-```
-
-The homepage will show the 15 most recent entries.
+The homepage activity feed is built automatically from your Markdown articles — just add a `.md` file to any section folder and it will appear in the timeline. The 15 most recent articles are shown.
 
 ### Customizing Styles
 
@@ -133,7 +122,7 @@ The homepage will show the 15 most recent entries.
 
 ### Customizing the "Currently" Section
 
-Edit the `currently` array at the top of `src/components/CurrentlySection.astro`. Add or remove items to reflect what you're reading, building, thinking, or listening to.
+Edit `content/currently.json`. Each group has a `heading` and a list of `items` with `label`/`text` pairs. Add, remove, or reorder groups and items to reflect what you're reading, building, thinking, or listening to.
 
 ### Customizing the Homepage Introduction
 
@@ -156,7 +145,9 @@ Edit the `SECTIONS` array in `src/utils/content.ts`. Each section has a `slug`, 
 ### Files you'll edit often (content & style)
 ```
 content/                      ← All your articles live here
-  activity.json               ← Recent activity timeline
+  profile.json                ← About, education, contact info
+  friends.json                ← Blogroll / friend links
+  currently.json              ← "Currently reading/building/..." content
   knowledge/*.md
   reading/*.md
   ideas/*.md
@@ -167,7 +158,9 @@ content/                      ← All your articles live here
   archive/*.md
 
 src/styles/theme.css           ← Colors, fonts, spacing — all in one place
-src/components/CurrentlySection.astro  ← "Currently reading/building/..." content
+content/currently.json         ← "Currently reading/building/..." content
+content/profile.json           ← About, education, contact info
+content/friends.json           ← Friend links
 src/pages/index.astro          ← Homepage intro text
 src/utils/content.ts           ← Section descriptions
 ```
@@ -200,7 +193,7 @@ package.json                   ← Dependencies & scripts
 
 3. **Update articles over time.** Each article shows both a "Published" and "Updated" date. Revisit and improve your notes as you learn more — living documents, not static posts.
 
-4. **Keep the activity feed fresh.** Adding an entry to `activity.json` when you publish something new keeps the homepage feeling alive, even if you don't add new content daily.
+4. **Keep the activity feed fresh.** The homepage timeline is built from your most recent articles, so publishing something new keeps the homepage feeling alive, even if you don't add content daily.
 
 5. **Don't over-decorate.** The design is intentionally minimal. Before adding a new visual element, ask: "Does this help the content, or does it compete with it?"
 

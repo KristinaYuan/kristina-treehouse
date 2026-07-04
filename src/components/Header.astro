@@ -34,7 +34,7 @@ const currentPath = Astro.url?.pathname || '/';
               href={item.href}
               class:list={['header__link', { 'header__link--active': isActive }]}
             >
-              {item.label}
+              <span class="header__link-first">{item.label[0]}</span>{item.label.slice(1)}
             </a>
           </li>
         );
@@ -113,7 +113,15 @@ const currentPath = Astro.url?.pathname || '/';
   }
 
   .header__link--active {
-    color: var(--color-accent);
+    color: var(--color-text-primary);
+  }
+
+  .header__link-first {
+    font-weight: 400;
+  }
+
+  .header__link:hover .header__link-first {
+    font-weight: 600;
   }
 
   /* Tighten spacing on medium screens so all items fit on one line */
