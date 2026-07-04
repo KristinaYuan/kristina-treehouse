@@ -332,11 +332,14 @@ const allTags = [...tagSet].sort((a, b) => a.localeCompare(b));
 </style>
 
 <script>
+  function initArchiveFilters() {
   const selectedTags = new Set<string>();
   const chips = document.querySelectorAll<HTMLButtonElement>('.tag-filter__chip');
   const items = document.querySelectorAll<HTMLElement>('.archive-month__item');
   const clearBtn = document.getElementById('tag-filter-clear');
   const noResults = document.getElementById('no-results');
+
+  if (chips.length === 0) return;
 
   function update() {
     // Update chip styling
@@ -395,4 +398,8 @@ const allTags = [...tagSet].sort((a, b) => a.localeCompare(b));
       update();
     });
   }
+  } // end initArchiveFilters
+
+  document.addEventListener('astro:page-load', initArchiveFilters);
+  initArchiveFilters();
 </script>

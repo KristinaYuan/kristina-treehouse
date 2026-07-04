@@ -87,6 +87,31 @@
   --activity-line-color:   var(--color-divider);
 }
 
+/* ===== View Transitions ===== */
+@view-transition {
+  navigation: auto;
+}
+
+/* Old page fades out slowly */
+::view-transition-old(root) {
+  animation: vt-fade-out 0.4s ease-out forwards;
+}
+
+/* New page fades in gently */
+::view-transition-new(root) {
+  animation: vt-fade-in 0.5s ease-in forwards;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ============================================================
    Global Reset & Base Styles
    ============================================================ */

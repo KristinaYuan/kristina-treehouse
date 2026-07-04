@@ -155,7 +155,7 @@ const archiveNavData = {
 ></div>
 
 <script>
-  (function () {
+  function initArchiveMode() {
     if (new URLSearchParams(window.location.search).get('from') !== 'archive') return;
 
     const dataEl = document.getElementById('archive-nav-data');
@@ -187,7 +187,10 @@ const archiveNavData = {
       makeLink(d.prevHref, d.prevTitle, 'prev', '← Previous') +
       makeLink(d.nextHref, d.nextTitle, 'next', 'Next →')
     }</div>`;
-  })();
+  }
+
+  document.addEventListener('astro:page-load', initArchiveMode);
+  initArchiveMode();
 </script>
 
 <style>
