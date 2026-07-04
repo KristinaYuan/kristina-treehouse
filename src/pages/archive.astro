@@ -69,7 +69,7 @@ const allTags = [...tagSet].sort((a, b) => a.localeCompare(b));
                         data-tags={article.frontmatter.tags?.join(',') ?? ''}
                       >
                         <a
-                          href={`${base}/${article.section}/${article.slug}`}
+                          href={`${base}/${article.section}/${article.slug}?from=archive`}
                           class="archive-month__link"
                         >
                           <div class="archive-month__main">

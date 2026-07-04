@@ -5,6 +5,8 @@ import {
   VALID_SECTIONS,
   getSectionMeta,
   getArticle,
+  getAllArticles,
+  getSectionArticles,
   formatDate,
 } from '../../utils/content';
 
@@ -13,7 +15,6 @@ const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.re
 export function getStaticPaths() {
   const paths: { params: { section: string; slug: string } }[] = [];
 
-  // Static glob — dynamic template literals are not supported by import.meta.glob
   const modules = import.meta.glob<{
     frontmatter: { title: string; date: string };
   }>('/content/**/*.md', { eager: true });
@@ -41,12 +42,43 @@ if (!article) {
 }
 
 const { frontmatter, Content } = article;
+
+// Compute prev/next for both modes at build time.
+// Section mode: within the current section only.
+const sectionSiblings = getSectionArticles(section!);
+const sectionIndex = sectionSiblings.findIndex(
+  (a) => a.section === section && a.slug === slug
+);
+const sectionPrev = sectionIndex > 0 ? sectionSiblings[sectionIndex - 1] : null;
+const sectionNext = sectionIndex < sectionSiblings.length - 1 ? sectionSiblings[sectionIndex + 1] : null;
+
+// Archive mode: across all sections, sorted by date.
+const allSiblings = getAllArticles();
+const allIndex = allSiblings.findIndex(
+  (a) => a.section === section && a.slug === slug
+);
+const archivePrev = allIndex > 0 ? allSiblings[allIndex - 1] : null;
+const archiveNext = allIndex < allSiblings.length - 1 ? allSiblings[allIndex + 1] : null;
+
+// Embed archive-mode nav data for client-side swap.
+const archiveNavData = {
+  backHref: `${base}/archive`,
+  backLabel: 'Archive',
+  prev: archivePrev ? {
+    href: `${base}/${archivePrev.section}/${archivePrev.slug}?from=archive`,
+    title: archivePrev.frontmatter.title,
+  } : null,
+  next: archiveNext ? {
+    href: `${base}/${archiveNext.section}/${archiveNext.slug}?from=archive`,
+    title: archiveNext.frontmatter.title,
+  } : null,
+};
 ---
 
 <BaseLayout title={frontmatter.title} description={frontmatter.description} narrow>
   <article class="article">
     <header class="article__header">
-      <a href={`${base}/${section}`} class="article__back">
+      <a href={`${base}/${section}`} class="article__back" id="article-back">
         &larr; {meta.label}
       </a>
 
@@ -76,8 +108,87 @@ const { frontmatter, Content } = article;
     <div class="article__content">
       <Content />
     </div>
+
+    <!-- Prev / Next navigation (always rendered so JS can populate for archive mode) -->
+    <nav class="article-nav" id="article-nav" aria-label="Previous and next articles">
+      {(sectionPrev || sectionNext) && (
+        <div class="article-nav__inner">
+          {sectionPrev ? (
+            <a
+              href={`${base}/${sectionPrev.section}/${sectionPrev.slug}`}
+              class="article-nav__link article-nav__link--prev"
+            >
+              <span class="article-nav__direction">&larr; Previous</span>
+              <span class="article-nav__title">{sectionPrev.frontmatter.title}</span>
+            </a>
+          ) : (
+            <span class="article-nav__link--placeholder" />
+          )}
+
+          {sectionNext ? (
+            <a
+              href={`${base}/${sectionNext.section}/${sectionNext.slug}`}
+              class="article-nav__link article-nav__link--next"
+            >
+              <span class="article-nav__direction">Next &rarr;</span>
+              <span class="article-nav__title">{sectionNext.frontmatter.title}</span>
+            </a>
+          ) : (
+            <span class="article-nav__link--placeholder" />
+          )}
+        </div>
+    )}
+      </nav>
   </article>
 </BaseLayout>
+
+<!-- Archive-mode nav data for client-side swap (data attrs so Astro evaluates expressions) -->
+<div
+  id="archive-nav-data"
+  data-back-href={archiveNavData.backHref}
+  data-back-label={archiveNavData.backLabel}
+  data-prev-href={archiveNavData.prev?.href ?? ''}
+  data-prev-title={archiveNavData.prev?.title ?? ''}
+  data-next-href={archiveNavData.next?.href ?? ''}
+  data-next-title={archiveNavData.next?.title ?? ''}
+  hidden
+></div>
+
+<script>
+  (function () {
+    if (new URLSearchParams(window.location.search).get('from') !== 'archive') return;
+
+    const dataEl = document.getElementById('archive-nav-data');
+    if (!dataEl) return;
+    const d = dataEl.dataset;
+
+    // Swap back link
+    const back = document.getElementById('article-back');
+    if (back && d.backHref) {
+      back.href = d.backHref;
+      back.textContent = '← ' + d.backLabel;
+    }
+
+    // Rebuild prev/next nav
+    const nav = document.getElementById('article-nav');
+    if (!nav || (!d.prevHref && !d.nextHref)) {
+      if (nav) nav.hidden = true;
+      return;
+    }
+    nav.hidden = false;
+
+    const makeLink = (href, title, direction, arrow) => {
+      if (!href) return '<span class="article-nav__link--placeholder"></span>';
+      const cls = direction === 'prev' ? 'article-nav__link article-nav__link--prev' : 'article-nav__link article-nav__link--next';
+      return `<a href="${href}" class="${cls}"><span class="article-nav__direction">${arrow}</span><span class="article-nav__title">${title}</span></a>`;
+    };
+
+    nav.innerHTML = `<div class="article-nav__inner">${
+      makeLink(d.prevHref, d.prevTitle, 'prev', '← Previous') +
+      makeLink(d.nextHref, d.nextTitle, 'next', 'Next →')
+    }</div>`;
+  })();
+</script>
 
 <style>
   .article {
@@ -161,5 +272,86 @@ const { frontmatter, Content } = article;
 
   .article__content :global(a:hover) {
     text-decoration-color: var(--color-accent);
+  }
+
+  /* Prev / Next navigation — :global() so JS-generated links in archive mode also get styled */
+  .article-nav {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .article-nav :global(.article-nav__inner) {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .article-nav :global(.article-nav__link) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-md);
+    text-decoration: none;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+    flex: 0 1 48%;
+    min-width: 0;
+  }
+
+  .article-nav :global(.article-nav__link):hover {
+    background: var(--color-accent-subtle);
+    border-color: var(--color-accent);
+  }
+
+  .article-nav :global(.article-nav__link--prev) {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .article-nav :global(.article-nav__link--next) {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .article-nav :global(.article-nav__direction) {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .article-nav :global(.article-nav__title) {
+    font-family: var(--font-serif);
+    font-size: var(--text-base);
+    color: var(--color-text-primary);
+    line-height: var(--leading-snug);
+  }
+
+  /* Empty placeholder so flex alignment holds when one side is missing */
+  .article-nav :global(.article-nav__link--placeholder) {
+    flex: 0 1 48%;
+    min-width: 0;
+  }
+
+  @media (max-width: 500px) {
+    .article-nav :global(.article-nav__inner) {
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .article-nav :global(.article-nav__link) {
+      flex: 1 1 auto;
+    }
+
+    .article-nav :global(.article-nav__link--next) {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .article-nav :global(.article-nav__link--placeholder) {
+      display: none;
+    }
   }
 </style>
