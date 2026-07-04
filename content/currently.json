@@ -8,13 +8,13 @@
   {
     "heading": "Currently Watching",
     "items": [
-      { "label": "Show", "text": "Add a show or film here", "url": "https://example.org" }
+      { "label": "Show", "text": "Young Sheldon", "url": "https://www.bilibili.com/bangumi/media/md400093713g" }
     ]
   },
   {
     "heading": "Currently Listening",
     "items": [
-      { "label": "Music", "text": "Add an album or song here", "url": "https://example.org" }
+      { "label": "Music", "text": "stupid song", "url": "https://163cn.tv/bai1q0Go" }
     ]
   },
   {
