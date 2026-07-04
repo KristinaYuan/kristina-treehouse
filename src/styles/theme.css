@@ -68,6 +68,25 @@
   --activity-line-color:  var(--color-divider);
 }
 
+/* ===== Dark Mode ===== */
+:root[data-theme="dark"] {
+  --color-bg:              #181c24;
+  --color-text-primary:    #e2e6ed;
+  --color-text-secondary:  #9ca3b2;
+  --color-text-muted:      #697080;
+  --color-divider:         #2a3040;
+  --color-accent:          #7AAEDB;
+  --color-accent-hover:    #92bfe4;
+  --color-accent-light:    rgba(122, 174, 219, 0.12);
+  --color-accent-subtle:   rgba(122, 174, 219, 0.06);
+
+  --header-bg:             rgba(24, 28, 36, 0.85);
+  --header-border-color:   var(--color-divider);
+
+  --activity-dot-color:    var(--color-accent);
+  --activity-line-color:   var(--color-divider);
+}
+
 /* ============================================================
    Global Reset & Base Styles
    ============================================================ */
@@ -89,6 +108,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  transition: color var(--transition-normal), background-color var(--transition-normal);
 }
 
 body {
