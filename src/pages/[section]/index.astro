@@ -22,6 +22,17 @@ if (!meta) {
 }
 
 const articles = getSectionArticles(section!);
+
+// Collect all unique tags from this section's articles, sorted alphabetically
+const tagSet = new Set<string>();
+for (const article of articles) {
+  if (article.frontmatter.tags) {
+    for (const tag of article.frontmatter.tags) {
+      tagSet.add(tag);
+    }
+  }
+}
+const allTags = [...tagSet].sort((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout title={meta.label} description={meta.description}>
@@ -38,33 +49,61 @@ const articles = getSectionArticles(section!);
       </p>
     </div>
   ) : (
-    <ul class="article-list">
-      {articles.map((article) => (
-        <li class="article-item">
-          <a
-            href={`${base}/${section}/${article.slug}`}
-            class="article-item__link"
+    <>
+      <!-- Tag filter bar -->
+      {allTags.length > 0 && (
+        <div class="tag-filter" aria-label="Filter by tag">
+          <span class="tag-filter__label">Filter:</span>
+          {allTags.map((tag) => (
+            <button
+              class="tag-filter__chip"
+              data-tag={tag}
+            >
+              {tag}
+            </button>
+          ))}
+          <button class="tag-filter__clear" id="tag-filter-clear">
+            Clear
+          </button>
+        </div>
+      )}
+
+      <!-- Article list -->
+      <ul class="article-list">
+        {articles.map((article) => (
+          <li
+            class="article-item"
+            data-tags={article.frontmatter.tags?.join(',') ?? ''}
           >
-            <h2 class="article-item__title">{article.frontmatter.title}</h2>
-            {article.frontmatter.description && (
-              <p class="article-item__desc">{article.frontmatter.description}</p>
-            )}
-            <div class="article-item__meta">
-              <time datetime={article.frontmatter.date}>
-                {formatDate(article.frontmatter.date)}
-              </time>
-              {article.frontmatter.tags && article.frontmatter.tags.length > 0 && (
-                <span class="article-item__tags">
-                  {article.frontmatter.tags.map((tag) => (
-                    <span class="tag">{tag}</span>
-                  ))}
-                </span>
+            <a
+              href={`${base}/${section}/${article.slug}`}
+              class="article-item__link"
+            >
+              <h2 class="article-item__title">{article.frontmatter.title}</h2>
+              {article.frontmatter.description && (
+                <p class="article-item__desc">{article.frontmatter.description}</p>
               )}
-            </div>
-          </a>
-        </li>
-      ))}
-    </ul>
+              <div class="article-item__meta">
+                <time datetime={article.frontmatter.date}>
+                  {formatDate(article.frontmatter.date)}
+                </time>
+                {article.frontmatter.tags && article.frontmatter.tags.length > 0 && (
+                  <span class="article-item__tags">
+                    {article.frontmatter.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </span>
+                )}
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <p class="no-results" id="no-results" hidden>
+        No articles match the selected tags.
+      </p>
+    </>
   )}
 </BaseLayout>
 
@@ -99,6 +138,68 @@ const articles = getSectionArticles(section!);
     font-size: 0.85em;
   }
 
+  /* Tag filter */
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .tag-filter__label {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-right: 0.2rem;
+  }
+
+  .tag-filter__chip {
+    padding: 0.25rem 0.65rem;
+    font-size: var(--text-xs);
+    font-family: var(--font-sans);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-divider);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .tag-filter__chip:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+  }
+
+  .tag-filter__chip--active {
+    color: var(--color-bg);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .tag-filter__chip--active:hover {
+    color: var(--color-bg);
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+
+  .tag-filter__clear {
+    padding: 0.25rem 0.65rem;
+    font-size: var(--text-xs);
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 0.3rem;
+    transition: color var(--transition-fast);
+  }
+
+  .tag-filter__clear:hover {
+    color: var(--color-accent);
+  }
+
+  /* Article list */
   .article-list {
     list-style: none;
     padding: 0;
@@ -111,6 +212,11 @@ const articles = getSectionArticles(section!);
   .article-item {
     margin: 0;
     padding: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .article-item--hidden {
+    display: none;
   }
 
   .article-item__link {
@@ -163,4 +269,66 @@ const articles = getSectionArticles(section!);
     background: var(--color-accent-subtle);
     border-radius: var(--radius-sm);
   }
+
+  .no-results {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+    padding: var(--space-lg) 0;
+    margin: 0;
+  }
 </style>
+
+<script>
+  const selectedTags = new Set<string>();
+  const chips = document.querySelectorAll<HTMLButtonElement>('.tag-filter__chip');
+  const items = document.querySelectorAll<HTMLElement>('.article-item');
+  const clearBtn = document.getElementById('tag-filter-clear');
+  const noResults = document.getElementById('no-results');
+
+  function update() {
+    // Update chip styling
+    chips.forEach((chip) => {
+      const tag = chip.getAttribute('data-tag')!;
+      chip.classList.toggle('tag-filter__chip--active', selectedTags.has(tag));
+    });
+
+    // Show/hide clear button
+    if (clearBtn) {
+      (clearBtn as HTMLElement).hidden = selectedTags.size === 0;
+    }
+
+    // Filter articles
+    let visibleCount = 0;
+    items.forEach((item) => {
+      const tags = (item.getAttribute('data-tags') || '').split(',').filter(Boolean);
+      const match = selectedTags.size === 0
+        || [...selectedTags].every((t) => tags.includes(t));
+      item.classList.toggle('article-item--hidden', !match);
+      if (match) visibleCount++;
+    });
+
+    if (noResults) {
+      noResults.hidden = visibleCount > 0 || selectedTags.size === 0;
+    }
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const tag = chip.getAttribute('data-tag')!;
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+      } else {
+        selectedTags.add(tag);
+      }
+      update();
+    });
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      selectedTags.clear();
+      update();
+    });
+  }
+</script>

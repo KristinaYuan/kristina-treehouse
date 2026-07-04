@@ -5,6 +5,21 @@ import { getArchive, getSectionMeta, formatDate } from '../utils/content';
 
 const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
 const archive = getArchive();
+
+// Collect all unique tags across the archive
+const tagSet = new Set<string>();
+for (const year of archive) {
+  for (const month of year.months) {
+    for (const article of month.articles) {
+      if (article.frontmatter.tags) {
+        for (const tag of article.frontmatter.tags) {
+          tagSet.add(tag);
+        }
+      }
+    }
+  }
+}
+const allTags = [...tagSet].sort((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout title="Archive" description="Everything, organized by time.">
@@ -16,54 +31,82 @@ const archive = getArchive();
   {archive.length === 0 ? (
     <p class="archive-empty">Nothing here yet.</p>
   ) : (
-    <div class="archive-years">
-      {archive.map((year) => (
-        <section class="archive-year">
-          <h2 class="archive-year__heading">{year.year}</h2>
-
-          {year.months.map((month) => (
-            <div class="archive-month">
-              <h3 class="archive-month__heading">{month.monthName}</h3>
-
-              <ul class="archive-month__list">
-                {month.articles.map((article) => {
-                  const sectionMeta = getSectionMeta(article.section);
-                  return (
-                    <li class="archive-month__item">
-                      <a
-                        href={`${base}/${article.section}/${article.slug}`}
-                        class="archive-month__link"
-                      >
-                        <div class="archive-month__main">
-                          <h4 class="archive-month__title">
-                            {article.frontmatter.title}
-                          </h4>
-                          {article.frontmatter.description && (
-                            <p class="archive-month__desc">
-                              {article.frontmatter.description}
-                            </p>
-                          )}
-                        </div>
-                        <div class="archive-month__meta">
-                          <time datetime={article.frontmatter.date}>
-                            {formatDate(article.frontmatter.date)}
-                          </time>
-                          {sectionMeta && (
-                            <span class="archive-month__section tag">
-                              {sectionMeta.label}
-                            </span>
-                          )}
-                        </div>
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+    <>
+      <!-- Tag filter bar -->
+      {allTags.length > 0 && (
+        <div class="tag-filter" aria-label="Filter by tag">
+          <span class="tag-filter__label">Filter:</span>
+          {allTags.map((tag) => (
+            <button
+              class="tag-filter__chip"
+              data-tag={tag}
+            >
+              {tag}
+            </button>
           ))}
-        </section>
-      ))}
-    </div>
+          <button class="tag-filter__clear" id="tag-filter-clear">
+            Clear
+          </button>
+        </div>
+      )}
+
+      <!-- Archive content -->
+      <div class="archive-years" id="archive-years">
+        {archive.map((year) => (
+          <section class="archive-year">
+            <h2 class="archive-year__heading">{year.year}</h2>
+
+            {year.months.map((month) => (
+              <div class="archive-month">
+                <h3 class="archive-month__heading">{month.monthName}</h3>
+
+                <ul class="archive-month__list">
+                  {month.articles.map((article) => {
+                    const sectionMeta = getSectionMeta(article.section);
+                    return (
+                      <li
+                        class="archive-month__item"
+                        data-tags={article.frontmatter.tags?.join(',') ?? ''}
+                      >
+                        <a
+                          href={`${base}/${article.section}/${article.slug}`}
+                          class="archive-month__link"
+                        >
+                          <div class="archive-month__main">
+                            <h4 class="archive-month__title">
+                              {article.frontmatter.title}
+                            </h4>
+                            {article.frontmatter.description && (
+                              <p class="archive-month__desc">
+                                {article.frontmatter.description}
+                              </p>
+                            )}
+                          </div>
+                          <div class="archive-month__meta">
+                            <time datetime={article.frontmatter.date}>
+                              {formatDate(article.frontmatter.date)}
+                            </time>
+                            {sectionMeta && (
+                              <span class="archive-month__section tag">
+                                {sectionMeta.label}
+                              </span>
+                            )}
+                          </div>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </section>
+        ))}
+      </div>
+
+      <p class="no-results" id="no-results" hidden>
+        to be explored
+      </p>
+    </>
   )}
 </BaseLayout>
 
@@ -88,6 +131,67 @@ const archive = getArchive();
   .archive-empty {
     color: var(--color-text-muted);
     font-style: italic;
+  }
+
+  /* Tag filter */
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .tag-filter__label {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-right: 0.2rem;
+  }
+
+  .tag-filter__chip {
+    padding: 0.25rem 0.65rem;
+    font-size: var(--text-xs);
+    font-family: var(--font-sans);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-divider);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .tag-filter__chip:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+  }
+
+  .tag-filter__chip--active {
+    color: var(--color-bg);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .tag-filter__chip--active:hover {
+    color: var(--color-bg);
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+
+  .tag-filter__clear {
+    padding: 0.25rem 0.65rem;
+    font-size: var(--text-xs);
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 0.3rem;
+    transition: color var(--transition-fast);
+  }
+
+  .tag-filter__clear:hover {
+    color: var(--color-accent);
   }
 
   .archive-years {
@@ -130,6 +234,11 @@ const archive = getArchive();
   .archive-month__item {
     margin: 0;
     padding: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .archive-month__item--hidden {
+    display: none;
   }
 
   .archive-month__link {
@@ -194,6 +303,19 @@ const archive = getArchive();
     border-radius: var(--radius-sm);
   }
 
+  .no-results {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+    padding: var(--space-lg) 0;
+    margin: 0;
+  }
+
+  .archive-month[hidden],
+  .archive-year[hidden] {
+    display: none;
+  }
+
   @media (max-width: 600px) {
     .archive-month__link {
       flex-direction: column;
@@ -208,3 +330,69 @@ const archive = getArchive();
     }
   }
 </style>
+
+<script>
+  const selectedTags = new Set<string>();
+  const chips = document.querySelectorAll<HTMLButtonElement>('.tag-filter__chip');
+  const items = document.querySelectorAll<HTMLElement>('.archive-month__item');
+  const clearBtn = document.getElementById('tag-filter-clear');
+  const noResults = document.getElementById('no-results');
+
+  function update() {
+    // Update chip styling
+    chips.forEach((chip) => {
+      const tag = chip.getAttribute('data-tag')!;
+      chip.classList.toggle('tag-filter__chip--active', selectedTags.has(tag));
+    });
+
+    // Show/hide clear button
+    if (clearBtn) {
+      (clearBtn as HTMLElement).hidden = selectedTags.size === 0;
+    }
+
+    // Filter articles
+    let visibleCount = 0;
+    items.forEach((item) => {
+      const tags = (item.getAttribute('data-tags') || '').split(',').filter(Boolean);
+      const match = selectedTags.size === 0
+        || [...selectedTags].every((t) => tags.includes(t));
+      item.classList.toggle('archive-month__item--hidden', !match);
+      if (match) visibleCount++;
+    });
+
+    // Hide empty months
+    document.querySelectorAll('.archive-month').forEach((month) => {
+      const visible = month.querySelectorAll('.archive-month__item:not(.archive-month__item--hidden)');
+      (month as HTMLElement).hidden = visible.length === 0 && selectedTags.size > 0;
+    });
+
+    // Hide empty years
+    document.querySelectorAll('.archive-year').forEach((year) => {
+      const visible = year.querySelectorAll('.archive-month:not([hidden])');
+      (year as HTMLElement).hidden = visible.length === 0 && selectedTags.size > 0;
+    });
+
+    if (noResults) {
+      noResults.hidden = visibleCount > 0 || selectedTags.size === 0;
+    }
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const tag = chip.getAttribute('data-tag')!;
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+      } else {
+        selectedTags.add(tag);
+      }
+      update();
+    });
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      selectedTags.clear();
+      update();
+    });
+  }
+</script>
