@@ -171,68 +171,78 @@ const fullTitle = title
 </style>
 
 <script>
-  const btn = document.getElementById('back-to-top');
-  if (btn) {
-    let ticking = false;
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
 
-    const toggle = () => {
-      btn.classList.toggle('back-to-top--visible', window.scrollY > 300);
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(toggle);
-        ticking = true;
+  function applyTheme() {
+    const html = document.documentElement;
+    const mode = localStorage.getItem('theme');
+    if (mode === 'light') {
+      html.removeAttribute('data-theme');
+      html.setAttribute('data-theme-state', 'light');
+    } else if (mode === 'dark') {
+      html.setAttribute('data-theme', 'dark');
+      html.setAttribute('data-theme-state', 'dark');
+    } else {
+      html.removeAttribute('data-theme-state');
+      if (mq.matches) {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.removeAttribute('data-theme');
       }
-    }, { passive: true });
+    }
+  }
 
+  function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+
+    function setButtonState(mode) {
+      btn.classList.remove('theme-toggle--light', 'theme-toggle--dark');
+      if (mode === 'light') btn.classList.add('theme-toggle--light');
+      if (mode === 'dark') btn.classList.add('theme-toggle--dark');
+    }
+
+    setButtonState(localStorage.getItem('theme'));
+
+    btn.addEventListener('click', () => {
+      const current = localStorage.getItem('theme');
+      if (!current || current === 'auto') {
+        localStorage.setItem('theme', 'light');
+      } else if (current === 'light') {
+        localStorage.setItem('theme', 'dark');
+      } else {
+        localStorage.removeItem('theme');
+      }
+      applyTheme();
+      setButtonState(localStorage.getItem('theme'));
+    });
+  }
+
+  function initBackToTop() {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
     btn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
-  // Theme toggle — cycles: light → dark → auto → light
-  const themeToggle = document.getElementById('theme-toggle');
-  if (themeToggle) {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-
-    function setButtonState(mode) {
-      themeToggle.classList.remove('theme-toggle--light', 'theme-toggle--dark');
-      if (mode === 'light') themeToggle.classList.add('theme-toggle--light');
-      if (mode === 'dark') themeToggle.classList.add('theme-toggle--dark');
+  // Scroll handler for back-to-top (set up once, queries button each frame)
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const btn = document.getElementById('back-to-top');
+        if (btn) btn.classList.toggle('back-to-top--visible', window.scrollY > 300);
+        ticking = false;
+      });
+      ticking = true;
     }
+  }, { passive: true });
 
-    // Init button state
-    setButtonState(localStorage.getItem('theme'));
-
-    themeToggle.addEventListener('click', () => {
-      const html = document.documentElement;
-      const current = localStorage.getItem('theme');
-
-      if (!current || current === 'auto') {
-        // Auto → Light
-        localStorage.setItem('theme', 'light');
-        html.removeAttribute('data-theme');
-        html.setAttribute('data-theme-state', 'light');
-        setButtonState('light');
-      } else if (current === 'light') {
-        // Light → Dark
-        localStorage.setItem('theme', 'dark');
-        html.setAttribute('data-theme', 'dark');
-        html.setAttribute('data-theme-state', 'dark');
-        setButtonState('dark');
-      } else {
-        // Dark → Auto
-        localStorage.removeItem('theme');
-        html.removeAttribute('data-theme-state');
-        if (mq.matches) {
-          html.setAttribute('data-theme', 'dark');
-        } else {
-          html.removeAttribute('data-theme');
-        }
-        setButtonState(null);
-      }
-    });
-  }
+  // Run on every page transition + initial load
+  document.addEventListener('astro:page-load', () => {
+    applyTheme();
+    initThemeToggle();
+    initBackToTop();
+  });
 </script>
