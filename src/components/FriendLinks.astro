@@ -19,7 +19,7 @@ const entries = (friendsData as FriendEntry[]) ?? [];
 
     <div class="friends__grid">
       {entries.map((entry) => (
-        <a href={entry.url} class="friends__card">
+        <a href={entry.url} class="friends__card" target="_blank" rel="noopener noreferrer">
           <h3 class="friends__name">{entry.name}</h3>
           <p class="friends__desc">{entry.description}</p>
           <span class="friends__arrow" aria-hidden="true">&rarr;</span>

@@ -9,13 +9,15 @@
       "school": "Peking University",
       "degree": "COE - Theoretical and Applied Mechanics (Robotics Engineering) & EECS - Computer Science",
       "years": "2024 – 2028",
-      "description": "Patriotism, advancement, democracy and science."
+      "description": "Patriotism, advancement, democracy and science.",
+      "url": "https://example.org"
     },
     {
       "school": "Tsinghua University High School",
       "degree": "High School Diploma",
       "years": "2021 – 2024",
-      "description": "Self-discipline and social commitment."
+      "description": "Self-discipline and social commitment.",
+      "url": "https://example.org"
     }
   ],
   "contact": [

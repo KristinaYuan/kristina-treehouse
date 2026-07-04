@@ -2,25 +2,37 @@
   {
     "heading": "Currently Reading",
     "items": [
-      { "label": "Book", "text": "Add a book title here" }
+      { "label": "Book", "text": "Add a book title here", "url": "https://example.org" }
+    ]
+  },
+  {
+    "heading": "Currently Watching",
+    "items": [
+      { "label": "Show", "text": "Add a show or film here", "url": "https://example.org" }
+    ]
+  },
+  {
+    "heading": "Currently Listening",
+    "items": [
+      { "label": "Music", "text": "Add an album or song here", "url": "https://example.org" }
+    ]
+  },
+  {
+    "heading": "Currently Exploring",
+    "items": [
+      { "label": "Interest", "text": "Add a rabbit hole you're exploring", "url": "https://example.org" }
+    ]
+  },
+  {
+    "heading": "Currently Learning",
+    "items": [
+      { "label": "Topic", "text": "Add a topic you're learning here", "url": "https://example.org" }
     ]
   },
   {
     "heading": "Currently Building",
     "items": [
-      { "label": "Project", "text": "Add a project here" }
-    ]
-  },
-  {
-    "heading": "Currently Thinking",
-    "items": [
-      { "label": "Thought", "text": "Add a thought here" }
-    ]
-  },
-  {
-    "heading": "Recently Listening",
-    "items": [
-      { "label": "Music", "text": "Add an album or song here" }
+      { "label": "Project", "text": "Add a project here", "url": "https://example.org" }
     ]
   }
 ]

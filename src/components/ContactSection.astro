@@ -1,7 +1,7 @@
 ---
 // ContactSection.astro — Minimal contact icons in the footer.
 // Data is loaded from content/profile.json. Edit that file to change contacts.
-// Items with an href open as links (email, GitHub); items without copy to clipboard (WeChat, phone).
+// All icons copy their value to clipboard on click.
 
 import profileData from '../../content/profile.json';
 
@@ -22,8 +22,8 @@ const contacts: ContactEntry[] = (data.contact ?? []).filter((c) => {
 });
 
 function isLink(c: ContactEntry): boolean {
-  // Items that should open a URL or mailto instead of copying
-  return c.icon === 'github' || c.icon === 'email' || c.icon === 'mail';
+  // All contact icons now copy to clipboard
+  return false;
 }
 ---
 
