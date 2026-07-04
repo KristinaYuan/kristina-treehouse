@@ -4,6 +4,8 @@
 
 import profileData from '../../content/profile.json';
 
+const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+
 interface ProfileData {
   about: {
     heading: string;
@@ -18,15 +20,35 @@ const data = profileData as ProfileData;
 const paragraphs = data.about.body
   .split('\n\n')
   .filter((p: string) => p.trim().length > 0);
+
+const hasAvatar = data.about.avatar && data.about.avatar.trim().length > 0;
+const avatarPath = hasAvatar ? data.about.avatar!.trim().replace(/^\/+/, '') : '';
+const avatarSrc = hasAvatar ? `${base}/${avatarPath}` : null;
 ---
 
 {paragraphs.length > 0 && (
   <section class="about" aria-label={data.about.heading}>
     <h2 class="about__heading">{data.about.heading}</h2>
-    <div class="about__body">
-      {paragraphs.map((paragraph: string) => (
-        <p>{paragraph}</p>
-      ))}
+
+    <div class="about__layout">
+      <div class="about__body">
+        {paragraphs.map((paragraph: string) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+
+      {avatarSrc && (
+        <div class="about__avatar">
+          <img
+            src={avatarSrc}
+            alt="Kristina's avatar"
+            class="about__avatar-img"
+            width="180"
+            height="180"
+            loading="lazy"
+          />
+        </div>
+      )}
     </div>
   </section>
 )}
@@ -43,8 +65,15 @@ const paragraphs = data.about.body
     margin-bottom: var(--space-md);
   }
 
+  .about__layout {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: flex-start;
+  }
+
   .about__body {
-    max-width: 600px;
+    flex: 1;
+    min-width: 0;
   }
 
   .about__body p {
@@ -56,5 +85,30 @@ const paragraphs = data.about.body
 
   .about__body p:last-child {
     margin-bottom: 0;
+  }
+
+  .about__avatar {
+    flex-shrink: 0;
+  }
+
+  .about__avatar-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-divider);
+  }
+
+  @media (max-width: 600px) {
+    .about__layout {
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .about__avatar-img {
+      width: 150px;
+      height: 150px;
+    }
   }
 </style>
