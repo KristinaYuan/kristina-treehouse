@@ -132,11 +132,10 @@ Edit the text inside `<section class="intro">` in `src/pages/index.astro`.
 
 Edit the `SECTIONS` array in `src/utils/content.ts`. Each section has a `slug`, `label`, and `description`.
 
-### Deploying to GitHub Pages
+### Deploying to Cloudflare Pages
 
-1. Push to the `main` branch — the GitHub Action in `.github/workflows/deploy.yml` will build and deploy automatically
-2. Go to your repository's **Settings → Pages** and ensure the source is set to **GitHub Actions**
-3. You may need to update `site` and `base` in `astro.config.mjs` to match your GitHub username and repo name
+1. Push to the `main` branch — GitHub Actions builds the site, then Cloudflare Pages auto-deploys it to `itskristina.space`
+2. The deploy workflow is in `.github/workflows/deploy.yml` (builds to `dist/`, which Cloudflare picks up)
 
 ---
 

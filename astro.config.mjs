@@ -4,8 +4,8 @@ import { defineConfig } from 'astro/config';
 // - User page (repo named <username>.github.io): site: 'https://<username>.github.io', base: '/'
 // - Project page (any other repo):       site: 'https://<username>.github.io', base: '/<repo-name>'
 export default defineConfig({
-  site: 'https://kristinayuan.github.io',
-  base: '/kristina-treehouse',
+  site: 'https://itskristina.space',
+  base: '/',
   build: {
     assets: 'assets',  // avoid _astro folder — Jekyll ignores _underscore dirs on GitHub Pages
   },
