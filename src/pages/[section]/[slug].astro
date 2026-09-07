@@ -84,6 +84,10 @@ const archiveNavData = {
 
       <h1 class="article__title">{frontmatter.title}</h1>
 
+      {frontmatter.description && (
+        <p class="article__description">{frontmatter.description}</p>
+      )}
+
       <div class="article__meta">
         <time datetime={frontmatter.date}>
           Published {formatDate(frontmatter.date)}
@@ -221,6 +225,18 @@ const archiveNavData = {
     font-weight: 500;
     line-height: var(--leading-tight);
     margin-bottom: var(--space-sm);
+  }
+
+  /* Subtitle (article description) — serif italic, editorial dek */
+  .article__description {
+    margin: 0 0 var(--space-sm);
+    max-width: 62ch;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: var(--leading-snug);
+    color: var(--color-text-secondary);
   }
 
   .article__meta {
