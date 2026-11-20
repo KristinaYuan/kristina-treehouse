@@ -5,7 +5,7 @@ import { getAllArticles, getSectionMeta } from '../utils/content';
 const base = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
 
 // Show 15 most recent articles from all sections
-const articles = getAllArticles().slice(0, 15);
+const articles = getAllArticles().slice(0, 7);
 
 // Format date as e.g. "Jul 4"
 function formatDate(dateStr: string): string {

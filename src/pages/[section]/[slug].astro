@@ -197,6 +197,50 @@ const archiveNavData = {
   initArchiveMode();
 </script>
 
+<script>
+  // Render mermaid diagrams. The library is only loaded on pages that
+  // actually contain a mermaid code block (Astro emits them as
+  // `<pre data-language="mermaid">`).
+  async function renderMermaid() {
+    const blocks = document.querySelectorAll(
+      '.article__content pre[data-language="mermaid"]'
+    );
+    if (!blocks.length) return;
+
+    const { default: mermaid } = await import('mermaid');
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: dark ? 'dark' : 'default',
+      themeVariables: { background: 'transparent' },
+      flowchart: {
+        nodeSpacing: 30,
+        rankSpacing: 30,
+      },
+    });
+
+    let i = 0;
+    for (const pre of blocks) {
+      const source = pre.querySelector('code')?.textContent ?? '';
+      try {
+        const { svg } = await mermaid.render(
+          `mermaid-${Date.now()}-${i++}`,
+          source
+        );
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mermaid';
+        wrapper.innerHTML = svg;
+        pre.replaceWith(wrapper);
+      } catch (err) {
+        console.error('[mermaid] render failed:', err);
+      }
+    }
+  }
+
+  document.addEventListener('astro:page-load', renderMermaid);
+  renderMermaid();
+</script>
+
 <style>
   .article {
     max-width: var(--max-width-article);
@@ -273,9 +317,18 @@ const archiveNavData = {
   }
 
   .article__content :global(h1),
-  .article__content :global(h2),
-  .article__content :global(h3) {
+  .article__content :global(h2) {
     margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .article__content :global(h3) {
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-sm);
+  }
+
+  .article__content :global(h4) {
+    margin-top: var(--space-sm);
     margin-bottom: var(--space-sm);
   }
 
@@ -291,6 +344,18 @@ const archiveNavData = {
 
   .article__content :global(a:hover) {
     text-decoration-color: var(--color-accent);
+  }
+
+  /* Mermaid diagrams */
+  .article__content :global(.mermaid) {
+    margin: var(--space-md) 0;
+    overflow-x: auto;
+  }
+
+  .article__content :global(.mermaid svg) {
+    display: block;
+    max-width: 100%;
+    height: auto;
   }
 
   /* Prev / Next navigation — :global() so JS-generated links in archive mode also get styled */
