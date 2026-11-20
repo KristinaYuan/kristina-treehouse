@@ -2,37 +2,37 @@
   {
     "heading": "Currently Reading",
     "items": [
-      { "label": "Book", "text": "Add a book title here", "url": "https://example.org" }
+      { "label": "Book", "text": "1Q84", "url": "https://example.org" }
     ]
   },
   {
     "heading": "Currently Watching",
     "items": [
-      { "label": "Show", "text": "Young Sheldon", "url": "https://www.bilibili.com/bangumi/media/md400093713g" }
+      { "label": "Show", "text": "How I Met Your Mother", "url": "https://b23.tv/A3tpKjD"  }
     ]
   },
   {
     "heading": "Currently Listening",
     "items": [
-      { "label": "Music", "text": "stupid song", "url": "https://163cn.tv/bai1q0Go" }
+      { "label": "Music", "text": "Busy Woman", "url": "https://163cn.tv/blsX700g" }
     ]
   },
   {
     "heading": "Currently Exploring",
     "items": [
-      { "label": "Interest", "text": "Add a rabbit hole you're exploring", "url": "https://example.org" }
+      { "label": "Interest", "text": "International Linguistics Olympiad", "url": "https://www.ioling.org" }
     ]
   },
   {
     "heading": "Currently Learning",
     "items": [
-      { "label": "Topic", "text": "Add a topic you're learning here", "url": "https://example.org" }
+      { "label": "Topic", "text": "Machine Learning", "url": "https://example.org" }
     ]
   },
   {
     "heading": "Currently Building",
     "items": [
-      { "label": "Project", "text": "Add a project here", "url": "https://example.org" }
+      { "label": "Project", "text": "Marginalia", "url": "https://github.com/KristinaYuan/Marginalia" }
     ]
   }
 ]
