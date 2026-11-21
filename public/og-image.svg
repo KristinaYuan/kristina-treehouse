@@ -47,14 +47,14 @@
     Kristina's Treehouse
   </text>
   <text x="80" y="330" font-family="Georgia, 'Cormorant Garamond', serif" font-size="36" font-style="italic" fill="#667085">
-    A little library in the trees.
+    "I wish we could go there."
   </text>
 
   <!-- Decorative line -->
-  <line x1="80" y1="370" x2="480" y2="370" stroke="#7AAEDB" stroke-width="2" opacity="0.5"/>
+  <line x1="80" y1="370" x2="735" y2="370" stroke="#7AAEDB" stroke-width="2" opacity="0.5"/>
 
   <!-- Subtitle -->
   <text x="80" y="420" font-family="'Inter', system-ui, sans-serif" font-size="24" fill="#98A2B3">
-    Notes, stories, ideas, and quiet moments.
+    Maybe it's not about happy ending. Maybe it's about the story.
   </text>
 </svg>
